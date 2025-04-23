@@ -3,6 +3,11 @@ Student Management System
 Designed by Alick Li & Bryce Xing
 """
 
+print("Student Management System")
+print("Designed by Li Wantao & Xing Bowen & Yao Haowen")
+print()
+print("Loading...")
+
 import tkinter as tk
 from tkinter import Menu
 from tkinter import messagebox
@@ -14,6 +19,8 @@ import numpy as np
 from scipy import stats
 from scipy.stats import skew
 from scipy.stats import kurtosis
+
+print("Done!")
 
 # Create Root Window
 root = tk.Tk()
@@ -40,6 +47,10 @@ def new_file():
 
 # Open Action, code for the "Open" menubar command item, which opens an Excel file and reads the data into the program.
 def open_file():
+    entryStatusBar.config(state='normal')
+    entryStatusBar.delete(0, tk.END)
+    entryStatusBar.insert(0, "Loading...")
+    entryStatusBar.config(state='readonly')
     file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
     if file_path:
         try:
@@ -62,38 +73,56 @@ def open_file():
                 students.append(student)
             sort_students(students, selectedSort.get())
             update_student_treeview()
-            messagebox.showinfo("Success", "File opened successfully.")
             entryStatusBar.config(state='normal')
             entryStatusBar.delete(0, tk.END)
-            entryStatusBar.insert(0, "")
+            entryStatusBar.insert(0, "Done!")
             entryStatusBar.config(state='readonly')
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
+    def delay():
+        entryStatusBar.config(state='normal')
+        entryStatusBar.delete(0, tk.END)
+        entryStatusBar.insert(0, "")
+        entryStatusBar.config(state='readonly')
+    entryStatusBar.after(1000, lambda: delay())
 
 # Export Action, code for the "Export" menubar command item, which exports the data to an Excel file.
 def export_file():
-    from operator import indexOf
-    from tkinter import filedialog
-    file = openpyxl.Workbook()
-    sheet = file.create_sheet("Sheet1", 0)
-    title = ["No.", "Name", "Student ID", "Score", "Grade"]
-    sheet["A1"] = title[0]
-    sheet["B1"] = title[1]
-    sheet["C1"] = title[2]
-    sheet["D1"] = title[3]
-    sheet["E1"] = title[4]
-    for student in sorted_students:
-        sheet.cell(row=indexOf(sorted_students, student)+2,column=1,value=indexOf(sorted_students, student)+1)
-        sheet.cell(row=indexOf(sorted_students, student)+2,column=2,value=student["name"])
-        sheet.cell(row=indexOf(sorted_students, student)+2,column=3, value=student["student_id"])
-        sheet.cell(row=indexOf(sorted_students, student)+2,column=4, value=student["score"])
-        sheet.cell(row=indexOf(sorted_students, student)+2,column=5, value=student["grade"])
-    file.save(filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("XLSX files", "*.xlsx")]))
-    file.close()
     entryStatusBar.config(state='normal')
     entryStatusBar.delete(0, tk.END)
-    entryStatusBar.insert(0, "Exported Success")
+    entryStatusBar.insert(0, "Loading...")
     entryStatusBar.config(state='readonly')
+    from operator import indexOf
+    from tkinter import filedialog
+    try:
+        file = openpyxl.Workbook()
+        sheet = file.create_sheet("Sheet1", 0)
+        title = ["No.", "Name", "Student ID", "Score", "Grade"]
+        sheet["A1"] = title[0]
+        sheet["B1"] = title[1]
+        sheet["C1"] = title[2]
+        sheet["D1"] = title[3]
+        sheet["E1"] = title[4]
+        for student in sorted_students:
+            sheet.cell(row=indexOf(sorted_students, student)+2,column=1,value=indexOf(sorted_students, student)+1)
+            sheet.cell(row=indexOf(sorted_students, student)+2,column=2,value=student["name"])
+            sheet.cell(row=indexOf(sorted_students, student)+2,column=3, value=student["student_id"])
+            sheet.cell(row=indexOf(sorted_students, student)+2,column=4, value=student["score"])
+            sheet.cell(row=indexOf(sorted_students, student)+2,column=5, value=student["grade"])
+        file.save(filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("XLSX files", "*.xlsx")]))
+        file.close()
+        entryStatusBar.config(state='normal')
+        entryStatusBar.delete(0, tk.END)
+        entryStatusBar.insert(0, "Done!")
+        entryStatusBar.config(state='readonly')
+    except Exception as e:
+        pass
+    def delay():
+        entryStatusBar.config(state='normal')
+        entryStatusBar.delete(0, tk.END)
+        entryStatusBar.insert(0, "")
+        entryStatusBar.config(state='readonly')
+    entryStatusBar.after(1000, lambda: delay())
 
 # Exit Action, which closes the program.
 def exit():
@@ -317,8 +346,8 @@ def on_tree_select(event):
 menubar = Menu(root)
 menuFile = Menu(menubar, tearoff=0)
 menuFile.add_command(label="New", command=new_file)
-menuFile.add_command(label="Open", command=open_file)
-menuFile.add_command(label="Export", command=export_file)
+menuFile.add_command(label="Open...", command=open_file)
+menuFile.add_command(label="Export...", command=export_file)
 menuFile.add_command(label="Exit", command=exit)
 menubar.add_cascade(label="File", menu=menuFile)
 root.config(menu=menubar)
