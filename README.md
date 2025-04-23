@@ -1,4 +1,4 @@
-# Student-Management-System
+# Student Management System
 
 Our theme is object-oriented programming.
 This is our student management system. 
